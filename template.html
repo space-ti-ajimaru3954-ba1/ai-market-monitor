@@ -11,164 +11,68 @@
       --red: #ef4444; --purple: #a855f7; --blue: #3b82f6; --white: #ffffff;
     }
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, sans-serif; overflow-x: hidden; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, sans-serif; }
     
-    /* レイアウト */
     .app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
-    aside { padding: 30px; border-right: 1px solid var(--line); background: #000; position: sticky; top: 0; height: 100vh; }
+    
+    /* サイドバーの修正：ボタンを目立たせる */
+    aside { 
+      padding: 30px 20px; 
+      border-right: 1px solid var(--line); 
+      background: #000; 
+      position: sticky; 
+      top: 0; 
+      height: 100vh; 
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-group { margin: 20px 0; }
+    
+    .nav-btn { 
+      width: 100%; 
+      padding: 14px 16px; 
+      margin-bottom: 12px; 
+      border-radius: 10px; 
+      border: 1px solid var(--line); 
+      background: #1a1f26; /* ボタンの背景色を少し明るく */
+      color: var(--ink); 
+      cursor: pointer; 
+      text-align: left; 
+      font-weight: bold; 
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s;
+    }
+    .nav-btn:hover { background: #2d353f; border-color: var(--blue); }
+    .nav-btn.active { 
+      background: var(--blue); 
+      border-color: var(--blue); 
+      color: white;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    }
+
     main { padding: 40px; max-width: 1100px; margin: 0 auto; width: 100%; }
 
-    /* ナビゲーション */
-    .nav-btn { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; text-align: left; font-weight: bold; transition: 0.2s; }
-    .nav-btn:hover { background: rgba(255,255,255,0.1); }
-    .nav-btn.active { background: var(--blue); border-color: var(--blue); }
-
-    /* メイン表示 */
+    /* メインモニター画面 */
     .hero { padding: 50px; border-radius: 30px; text-align: center; margin-bottom: 30px; border: 1px solid var(--line); transition: 0.5s; }
     .phase-title { font-size: 80px; font-weight: 900; line-height: 1; margin: 15px 0; letter-spacing: -2px; }
     .grid { display: grid; gap: 20px; grid-template-columns: 1fr 1fr; }
     .card { background: var(--panel); padding: 24px; border-radius: 20px; border: 1px solid var(--line); }
     
-    /* マニュアル画面の装飾 */
+    /* マニュアル表示 */
     #manual-screen { display: none; }
-    .step-box { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; }
-    .step-num { width: 40px; height: 40px; border-radius: 50%; background: var(--blue); display: grid; place-items: center; font-weight: bold; flex-shrink: 0; }
-    
-    /* フェーズ解説テーブル */
-    .phase-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
-    .phase-table th, .phase-table td { padding: 12px; border: 1px solid var(--line); text-align: left; }
-    .phase-table th { background: rgba(255,255,255,0.05); }
+    .step-box { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; }
+    .step-num { width: 35px; height: 35px; border-radius: 50%; background: var(--blue); display: grid; place-items: center; font-weight: bold; flex-shrink: 0; }
+    .phase-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    .phase-table td, .phase-table th { padding: 15px; border: 1px solid var(--line); text-align: left; }
 
-    /* ユーティリティ */
     .BAD { color: var(--red); font-weight: bold; }
     .OK { color: var(--green); font-weight: bold; }
     .UNKNOWN { color: var(--yellow); font-style: italic; }
     .metric { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
     
-    @media (max-width: 800px) { .app { grid-template-columns: 1fr; } aside { height: auto; position: relative; } .grid { grid-template-columns: 1fr; } }
-  </style>
-</head>
-<body>
-  <div class="app">
-    <aside>
-      <h2 style="color:var(--blue); margin-bottom: 5px;">Sentinel 17.0</h2>
-      <p style="font-size: 11px; color: var(--muted); margin-bottom: 30px;">FANG+ 1800万円防衛モデル</p>
-      
-      <button class="nav-btn active" onclick="showScreen('monitor')">● 監視モニター</button>
-      <button class="nav-btn" onclick="showScreen('manual')">📖 運用説明書</button>
-
-      <div style="margin-top: 50px; padding: 15px; border-radius: 12px; background: rgba(255,255,255,0.05);">
-        <small style="color:var(--muted)">市場心理 (VIX)</small>
-        <div style="font-size: 24px; font-weight: 900;">{{VIX}}</div>
-      </div>
-    </aside>
-
-    <main>
-      <!-- メインモニター画面 -->
-      <div id="monitor-screen">
-        <div class="hero" id="hero">
-          <div style="opacity: 0.7; font-size: 14px; font-weight: bold; letter-spacing: 5px;">CURRENT STATUS PHASE</div>
-          <div class="phase-title" id="phaseDisplay">{{PHASE}}</div>
-          <div id="stateDesc" style="font-size: 24px; font-weight: 900;">分析中...</div>
-          <div id="actionText" style="margin-top: 20px; background: rgba(255,255,255,0.15); display: inline-block; padding: 10px 30px; border-radius: 50px; font-weight: bold;">判定中</div>
-        </div>
-
-        <div class="grid">
-          <div class="card">
-            <h3 style="margin: 0 0 15px; font-size: 14px; color: var(--blue);">【原因系】 AI業績・投資</h3>
-            <div class="metric"><span>1. Big4 投資成長 (CAPEX)</span><span class="val {{F_CAPEX}}">{{F_CAPEX}}</span></div>
-            <div class="metric"><span>2. NVDA 売上成長率</span><span class="val {{F_NVDA}}">{{F_NVDA}}</span></div>
-            <div class="metric"><span>3. メモリ需要 (MU/HBM)</span><span class="val {{F_MEMORY}}">{{F_MEMORY}}</span></div>
-          </div>
-          <div class="card">
-            <h3 style="margin: 0 0 15px; font-size: 14px; color: var(--blue);">【結果系】 トレンド・心理</h3>
-            <div class="metric"><span>半導体相対力 (SOXX/SPY)</span><span class="val {{S_RS}}">{{S_RS}}</span></div>
-            <div class="metric"><span>FNGS 長期線 (MA200)</span><span class="val {{S_PRICE}}">{{S_PRICE}}</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 運用説明書画面 -->
-      <div id="manual-screen">
-        <h1>📖 運用説明書：Sentinelロジック</h1>
-        
-        <div class="card" style="margin-bottom: 30px;">
-          <h3>1. なぜ「価格下落より早い」のか？</h3>
-          <p style="font-size: 14px; line-height: 1.8;">
-            このシステムは、株価（結果）ではなく<b>「投資の意志（原因）」</b>を最優先します。AIバブルは以下のドミノ倒しの順で崩壊します。本システムは、ドミノの1枚目〜3枚目が倒れた時点で売却シグナルを出します。
-          </p>
-          <div style="margin-top: 20px;">
-            <div class="step-box"><div class="step-num">1</div><div><b>BigTechのCAPEX（設備投資）鈍化</b><br><small>「もう十分投資した」とGAFAMが財布を閉じる（最速の予兆）</small></div></div>
-            <div class="step-box" style="border-left: 4px solid var(--blue); margin-left: 18px;"><div class="step-num">2</div><div><b>半導体・メモリ受注の減少</b><br><small>NVIDIAやMicronの業績成長が鈍化し始める</small></div></div>
-            <div class="step-box" style="border-left: 4px solid var(--blue); margin-left: 18px;"><div class="step-num">3</div><div><b>セクター相対力の低下</b><br><small>市場全体は上がっているのに、ハイテク株だけ売られ始める</small></div></div>
-            <div class="step-box" style="border-left: 4px solid var(--red); margin-left: 18px;"><div class="step-num">4</div><div><b>株価のMA200割れ・暴落</b><br><small>一般投資家がパニックになり、投げ売りが始まる（最終結果）</small></div></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>2. フェーズ別・行動指針</h3>
-          <table class="phase-table">
-            <thead>
-              <tr><th>フェーズ</th><th>意味・状態</th><th>具体的な行動</th></tr>
-            </thead>
-            <tbody>
-              <tr><td style="color:var(--green); font-weight:bold;">GREEN</td><td>AI拡大・正常</td><td><b>積立を継続。</b>一切売る必要はありません。</td></tr>
-              <tr><td style="color:var(--yellow); font-weight:bold;">YELLOW</td><td>変調の兆し</td><td>継続保有。ただし新規の買い増しは慎重に。</td></tr>
-              <tr><td style="color:var(--orange); font-weight:bold;">ORANGE</td><td>警戒（原因2つ）</td><td><b>新規積立を停止。</b>現金を蓄え始めます。</td></tr>
-              <tr><td style="color:var(--red); font-weight:bold;">RED</td><td>危険（原因3つ）</td><td><b>資産の30〜50%を利確。</b>致命傷を避ける段階です。</td></tr>
-              <tr><td style="color:var(--purple); font-weight:bold;">PURPLE</td><td>崩壊（原因＋結果）</td><td><b>資産の70〜100%を退避。</b>サイクルの終了を確認。</td></tr>
-              <tr><td style="color:var(--white); font-weight:bold;">CHECK</td><td>データ欠落</td><td>手動でBigTechの決算資料を確認してください。</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <p style="margin-top: 40px; text-align: center; font-size: 11px; color: var(--muted);">
-        最終解析：{{LAST_UPDATE}} | FANG+ 1800万円防衛 Sentinel
-      </p>
-    </main>
-  </div>
-
-  <script>
-    function showScreen(screenId) {
-      document.getElementById('monitor-screen').style.display = (screenId === 'monitor') ? 'block' : 'none';
-      document.getElementById('manual-screen').style.display = (screenId === 'manual') ? 'block' : 'none';
-      
-      const btns = document.querySelectorAll('.nav-btn');
-      btns[0].classList.toggle('active', screenId === 'monitor');
-      btns[1].classList.toggle('active', screenId === 'manual');
-    }
-
-    function updateUI() {
-      const phase = document.getElementById('phaseDisplay').innerText;
-      let desc = ""; let action = ""; let color = "";
-
-      switch(phase) {
-        case "GREEN":
-          desc = "AI拡大期：正常"; action = "FANG+ 積立・保有継続";
-          color = "linear-gradient(135deg, #064e3b, #000)"; break;
-        case "YELLOW":
-          desc = "変調：警戒開始"; action = "継続保有（新規買付注意）";
-          color = "linear-gradient(135deg, #78350f, #000)"; break;
-        case "ORANGE":
-          desc = "警戒：複数指標の鈍化"; action = "新規積立を停止";
-          color = "linear-gradient(135deg, #7c2d12, #000)"; break;
-        case "RED":
-          desc = "危険：需要の消失"; action = "資産の30〜50%を利確";
-          color = "linear-gradient(135deg, #7f1d1d, #000)"; break;
-        case "PURPLE":
-          desc = "崩壊：サイクル終了確定"; action = "資産の70〜100%を退避";
-          color = "linear-gradient(135deg, #4c1d95, #000)"; break;
-        case "CHECK":
-          desc = "要確認：データ欠落"; action = "決算短信を直接確認してください";
-          color = "linear-gradient(135deg, #444, #000)"; break;
-      }
-
-      document.getElementById('stateDesc').innerText = desc;
-      document.getElementById('actionText').innerText = action;
-      document.getElementById('hero').style.background = color;
-    }
-    window.onload = updateUI;
-  </script>
-</body>
-</html>
+    @media (max-width: 800px) { .app { grid-template-columns: 1fr;
