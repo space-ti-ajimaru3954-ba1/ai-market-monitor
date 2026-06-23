@@ -1,0 +1,28 @@
+name: Hourly Market Monitor
+
+on:
+  schedule:
+    - cron: '0 * * * *' # 1時間ごとに実行
+  workflow_dispatch:      # 手動実行ボタンも作る
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          pip install yfinance pandas
+      - name: Run monitor
+        run: python monitor.py
+      - name: Commit and Push
+        run: |
+          git config --global user.name "MarketBot"
+          git config --global user.email "bot@github.com"
+          git add index.html
+          git commit -m "Update scores" || exit 0
+          git push
