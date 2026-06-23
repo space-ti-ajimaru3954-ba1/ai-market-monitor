@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FANG+ Sentinel Ver 17.0</title>
+  <style>
+    :root {
+      --bg: #030406; --panel: #0d111a; --ink: #f1f5f9; --muted: #64748b;
+      --line: #1e293b; --green: #10b981; --yellow: #f59e0b; --orange: #f97316;
+      --red: #ef4444; --purple: #a855f7; --blue: #3b82f6; --white: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, sans-serif; }
+    .app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+    aside { padding: 30px; border-right: 1px solid var(--line); background: #000; }
+    main { padding: 40px; max-width: 1000px; margin: 0 auto; width: 100%; }
+    .hero { padding: 50px; border-radius: 30px; text-align: center; margin-bottom: 30px; position: relative; border: 1px solid var(--line); }
+    .phase-title { font-size: 80px; font-weight: 900; line-height: 1; margin: 15px 0; letter-spacing: -2px; }
+    .grid { display: grid; gap: 20px; grid-template-columns: 1fr 1fr; }
+    .card { background: var(--panel); padding: 24px; border-radius: 20px; border: 1px solid var(--line); }
+    .metric { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+    .val { font-weight: bold; }
+    .BAD { color: var(--red); } .OK { color: var(--green); } .UNKNOWN { color: var(--yellow); font-style: italic; } .CHECK { color: var(--yellow); }
+    .manual-list { margin-top: 20px; font-size: 11px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; border: 1px solid var(--line); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <h2 style="color:var(--blue)">Sentinel 17.0</h2>
+      <p style="font-size: 11px; color: var(--muted);">AIサイクルの「意志」をフェーズ判定<br>1800万円防衛・最終モデル</p>
+      
+      <div class="manual-list">
+        <div style="font-weight:bold; color:var(--yellow); margin-bottom:8px;">手動確認推奨（yfinance限界）</div>
+        ・TSMC 決算発表時の「AI売上」<br>
+        ・Micron HBMガイダンス<br>
+        ・BigTech AI収益化の進捗
+      </div>
+
+      <div style="margin-top: 30px; padding: 15px; border-radius: 12px; background: rgba(255,255,255,0.05);">
+        <small>市場心理 (VIX)</small>
+        <div style="font-size: 24px; font-weight: 900;">19</div>
+      </div>
+    </aside>
+
+    <main>
+      <div class="hero" id="hero">
+        <div style="opacity: 0.7; font-size: 14px; font-weight: bold; letter-spacing: 5px;">CURRENT STATUS PHASE</div>
+        <div class="phase-title" id="phaseDisplay">GREEN</div>
+        <div id="stateDesc" style="font-size: 24px; font-weight: 900;">分析中...</div>
+        <div id="actionText" style="margin-top: 20px; background: rgba(255,255,255,0.15); display: inline-block; padding: 10px 30px; border-radius: 50px; font-weight: bold;">判定中</div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3 style="margin: 0 0 15px; font-size: 13px; color: var(--blue);">【原因系】 AIファンダメンタル</h3>
+          <div class="metric"><span>1. Big4 投資成長 (CAPEX)</span><span class="val OK">OK</span></div>
+          <div class="metric"><span>2. NVDA 売上成長率</span><span class="val OK">OK</span></div>
+          <div class="metric"><span>3. メモリ需要 (MU/HBM)</span><span class="val OK">OK</span></div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin: 0 0 15px; font-size: 13px; color: var(--blue);">【先行・結果】 市場・トレンド</h3>
+          <div class="metric"><span>半導体相対力 (SOXX/SPY)</span><span class="val OK">OK</span></div>
+          <div class="metric"><span>FNGS 長期線 (MA200)</span><span class="val OK">OK</span></div>
+          <p style="font-size: 10px; color: var(--muted); margin-top: 10px;">※原因3つ＋市場崩壊でPURPLE(全退避)になります。</p>
+        </div>
+      </div>
+
+      <p style="margin-top: 40px; text-align: center; font-size: 11px; color: var(--muted);">
+        最終解析：2026-06-24 00:01 | FANG+ 1800万円防衛システム
+      </p>
+    </main>
+  </div>
+
+  <script>
+    function updateUI() {
+      const phase = document.getElementById('phaseDisplay').innerText;
+      let desc = ""; let action = ""; let color = "";
+
+      switch(phase) {
+        case "GREEN":
+          desc = "AI拡大期：正常"; action = "FANG+ 積立・保有継続";
+          color = "linear-gradient(135deg, #064e3b, #000)"; break;
+        case "YELLOW":
+          desc = "変調：警戒開始"; action = "継続保有（新規買付注意）";
+          color = "linear-gradient(135deg, #78350f, #000)"; break;
+        case "ORANGE":
+          desc = "警戒：複数指標の鈍化"; action = "新規積立を停止";
+          color = "linear-gradient(135deg, #7c2d12, #000)"; break;
+        case "RED":
+          desc = "危険：需要の消失"; action = "資産の30〜50%を利確";
+          color = "linear-gradient(135deg, #7f1d1d, #000)"; break;
+        case "PURPLE":
+          desc = "崩壊：サイクル終了確定"; action = "資産の70〜100%を退避";
+          color = "linear-gradient(135deg, #4c1d95, #000)"; break;
+        case "CHECK":
+          desc = "要確認：データ欠落"; action = "決算短信を直接確認してください";
+          color = "linear-gradient(135deg, #444, #000)"; break;
+      }
+
+      document.getElementById('stateDesc').innerText = desc;
+      document.getElementById('actionText').innerText = action;
+      document.getElementById('hero').style.background = color;
+    }
+    window.onload = updateUI;
+  </script>
+</body>
+</html>
