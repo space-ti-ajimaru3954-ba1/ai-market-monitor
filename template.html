@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FANG+ Sentinel Ver 17.0 - Tactical Edition</title>
+  <title>FANG+ Sentinel Ver 17.0 - Final Edition</title>
   <style>
     :root {
       --bg: #030406; --panel: #0d111a; --ink: #f1f5f9; --muted: #64748b;
@@ -28,11 +28,6 @@
     .nav-btn:hover { background: #2d353f; border-color: var(--blue); }
     .nav-btn.active { background: var(--blue); border-color: var(--blue); color: white; }
 
-    .manual-list { 
-      margin: 15px 0; font-size: 11px; background: rgba(255, 255, 255, 0.03); 
-      padding: 15px; border-radius: 10px; border: 1px solid var(--line); line-height: 1.6;
-    }
-
     main { padding: 40px; max-width: 1100px; margin: 0 auto; width: 100%; }
     .hero { padding: 50px; border-radius: 30px; text-align: center; margin-bottom: 30px; border: 1px solid var(--line); transition: 0.8s ease; }
     .phase-title { font-size: 80px; font-weight: 900; line-height: 1; margin: 15px 0; letter-spacing: -2px; }
@@ -42,14 +37,16 @@
     #manual-screen, #guide-screen { display: none; }
     .phase-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
     .phase-table td, .phase-table th { padding: 15px; border: 1px solid var(--line); text-align: left; }
-    .phase-table th { background: rgba(255,255,255,0.05); color: var(--muted); }
 
     .guide-card { border-left: 4px solid var(--yellow); padding-left: 20px; margin-bottom: 30px; }
     .search-word { background: #000; color: var(--green); padding: 4px 8px; border-radius: 4px; font-family: monospace; }
+    .bad-num { color: var(--red); font-weight: bold; font-size: 1.1em; }
 
     .BAD { color: var(--red); font-weight: bold; }
     .OK { color: var(--green); font-weight: bold; }
-    .UNKNOWN { color: var(--yellow); font-style: italic; }
+    .UNKNOWN { color: var(--yellow); font-style: italic; animation: blink 2s infinite; }
+    @keyframes blink { 50% { opacity: 0.5; } }
+
     .metric { padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
     .metric-top { display: flex; justify-content: space-between; align-items: center; }
     .metric-desc { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
@@ -61,7 +58,7 @@
   <div class="app">
     <aside>
       <h2 style="color:var(--blue); margin-bottom: 5px; font-size: 22px;">Sentinel 17.0</h2>
-      <p style="font-size: 11px; color: var(--muted);">1800万円防衛・最終モデル</p>
+      <p style="font-size: 11px; color: var(--muted);">1800万円防衛・戦略モデル</p>
       
       <div class="nav-group">
         <button class="nav-btn active" id="btn-monitor" onclick="showScreen('monitor')"><span>●</span> 監視モニター</button>
@@ -69,11 +66,10 @@
         <button class="nav-btn" id="btn-guide" onclick="showScreen('guide')"><span>🔍</span> 調査ガイド</button>
       </div>
 
-      <div class="manual-list">
+      <div style="padding: 15px; border-radius: 12px; background: rgba(255,255,255,0.05); margin-top: auto;">
         <small style="color:var(--muted)">市場心理 (VIX)</small>
         <div style="font-size: 24px; font-weight: 900;">{{VIX}}</div>
       </div>
-      <p style="font-size: 10px; color: var(--muted); margin-top: auto;">最終解析：{{LAST_UPDATE}}</p>
     </aside>
 
     <main>
@@ -94,7 +90,7 @@
             </div>
             <div class="metric">
               <div class="metric-top"><span>2. NVDA 売上成長率</span><span class="val {{F_NVDA}}">{{F_NVDA}}</span></div>
-              <div class="metric-desc">NVIDIAの四半期売上成長が前年比30%を割ると<b>BAD</b></div>
+              <div class="metric-desc">NVIDIAの売上成長が前年比30%を割ると<b>BAD</b></div>
             </div>
             <div class="metric">
               <div class="metric-top"><span>3. メモリ需要 (MU/HBM)</span><span class="val {{F_MEMORY}}">{{F_MEMORY}}</span></div>
@@ -105,79 +101,84 @@
             <h3 style="margin: 0 0 15px; font-size: 14px; color: var(--blue);">【結果系】 トレンド・心理</h3>
             <div class="metric">
               <div class="metric-top"><span>半導体相対力 (SOXX/SPY)</span><span class="val {{S_RS}}">{{S_RS}}</span></div>
-              <div class="metric-desc">半導体指数が市場平均（S&P500）に負け始めると<b>BAD</b></div>
+              <div class="metric-desc">半導体指数が市場平均に負けると<b>BAD</b></div>
             </div>
             <div class="metric">
               <div class="metric-top"><span>FNGS 長期線 (MA200)</span><span class="val {{S_PRICE}}">{{S_PRICE}}</span></div>
-              <div class="metric-desc">FANG+の株価が200日移動平均線を割ると<b>BAD</b></div>
+              <div class="metric-desc">FANG+株価が200日移動平均を割ると<b>BAD</b></div>
             </div>
-            <p style="font-size: 10px; color: var(--muted); margin-top: 10px;">※原因3つ＋結果2つBADでPURPLE(全退避)になります。</p>
           </div>
         </div>
       </div>
 
       <!-- 画面2: 運用説明書 -->
       <div id="manual-screen">
-        <h1>📖 運用説明書：行動マニュアル</h1>
+        <h1>📖 運用説明書</h1>
         <div class="card">
-          <h3>項目の「OK」が「BAD」に変わった時の意味</h3>
-          <p style="font-size: 14px; line-height: 1.8;">
-            「OK」は正常な拡大を、「**BAD**」はサイクルの失速を意味します。1800万円を運用する場合、以下の行動をとってください。
-          </p>
+          <h3>1. 色の変化と売却タイミング</h3>
+          <p>中心の「PHASE」の色が、リスクの深さを表します。</p>
           <table class="phase-table">
-            <thead>
-              <tr><th>BADの数</th><th>想定される状態</th><th>あなたの行動</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>1つ</td><td>一時的なノイズ・調整</td><td><b>静観。</b>何もしなくて良い。</td></tr>
-              <tr><td>2つ</td><td>成長にブレーキの兆し</td><td><b>新規積立を停止。</b>（現金を貯める）</td></tr>
-              <tr><td>3つ</td><td>需要の消失（サイクル末期）</td><td><b>資産の30〜50%を利確。</b>（1800万なら500万〜900万を売る）</td></tr>
-              <tr><td>4つ以上</td><td>バブル崩壊・長期停滞</td><td><b>資産の70〜100%を退避。</b>（NASDAQ100や現金へ移動）</td></tr>
-            </tbody>
+            <tr><th>色・文字</th><th>BADの数</th><th>あなたの行動</th></tr>
+            <tr style="color:var(--green)"><td>GREEN</td><td>0個</td><td><b>積立を継続。</b>平常時。</td></tr>
+            <tr style="color:var(--yellow)"><td>YELLOW</td><td>1個</td><td><b>静観。</b>ノイズの可能性が高い。</td></tr>
+            <tr style="color:var(--orange)"><td>ORANGE</td><td>2個</td><td><b>新規積立を停止。</b>現金を確保開始。</td></tr>
+            <tr style="color:var(--red)"><td>RED</td><td>3個</td><td><b>資産の30〜50%を利確。</b>（重要）</td></tr>
+            <tr style="color:var(--purple)"><td>PURPLE</td><td>3個＋株安</td><td><b>資産の70〜100%を退避。</b>（死守）</td></tr>
+            <tr style="color:var(--yellow)"><td>CHECK</td><td>不明</td><td><b>手動確認。</b>データ取得失敗。</td></tr>
           </table>
         </div>
         <div class="card">
-          <h3>下落より早く逃げるための絶対ルール</h3>
-          <p style="font-size: 14px; color: var(--muted);">
-            株価がMA200を割る（結果）前に、原因系（CAPEXや売上）がBADになったら、そこが最大の逃げ場です。株価がまだ高くても、SentinelがRED（3つBAD）を出したら、感情を捨てて売却を検討してください。
-          </p>
+          <h3>2. UNKNOWN（データ欠落）時の対応</h3>
+          <p>財務データが取得できないと、個別の「OK」が <span class="UNKNOWN">UNKNOWN</span> に変わります。</p>
+          <ul>
+            <li><b>どこに出るか：</b> 原因系（業績）の「OK」の欄に表示されます。</li>
+            <li><b>全体の表示：</b> 上部の箱が<b>「CHECK（灰色）」</b>になります。</li>
+            <li><b>行動：</b> 「調査ガイド」を開き、手動で数字をチェックしてください。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>3. 毎日のチェックは必要？</h3>
+          <ul>
+            <li><b>基本：</b> 週に1回、URLを開くだけで十分です。</li>
+            <li><b>決算期：</b> 1, 4, 7, 10月は重要です。NVIDIAやMicrosoftの決算発表の<b>翌日</b>に必ず確認してください。</li>
+          </ul>
         </div>
       </div>
 
       <!-- 画面3: 調査ガイド -->
       <div id="guide-screen">
-        <h1>🔍 調査ガイド：いつ確認すべきか</h1>
+        <h1>🔍 手動調査：具体的な「BAD」基準</h1>
+        <p style="color:var(--muted)">1800万円を守るための、客観的な数値基準です。</p>
         
-        <div class="card" style="border-left: 4px solid var(--blue);">
-          <h3>🚨 調査を起動するタイミング</h3>
-          <ul style="font-size: 14px; line-height: 1.8;">
-            <li><b>フェーズが動いた時：</b> GREENからYELLOWやORANGEに変わったら必ず詳細を確認。</li>
-            <li><b>決算シーズン（1, 4, 7, 10月）：</b> 米国企業の決算発表が相次ぐ時期に「原因系」を再確認。</li>
-            <li><b>UNKNOWNが出た時：</b> システムがデータを取れなかった場合、以下の手順で手動確認。</li>
-          </ul>
+        <div class="card guide-card">
+          <h4>1. GAFAM独占禁止法の判決</h4>
+          <p><b>BADの数値：</b> 司法省により「事業の強制分離（解体）」や「収益モデル（ストア手数料等）の根本禁止」の判決が出た場合。</p>
+          <span class="search-word">Google 独占禁止法 判決 ニュース</span>
         </div>
 
         <div class="card guide-card">
-          <h4>1. GAFAM独占禁止法の判決</h4>
-          <p style="font-size:13px;"><b>BADの基準：</b> 事業解体や、中核事業（広告やストア）の制限判決が出た場合。<br>
-          <span class="search-word">Google 独占禁止法 判決</span></p>
+          <h4>2. TSMC 決算の「AI売上成長」</h4>
+          <p><b>BADの数値（重要）：</b> <br>
+            ① HPC(AI向け)部門の売上が<b>前年同期比(YoY)で15%未満</b>になった場合。<br>
+            ② もしくは、<b>前期(3ヶ月前)比でマイナス</b>成長になった場合。
+          </p>
+          <a href="https://investor.tsmc.com/japanese" target="_blank" style="color:var(--blue)">TSMC投資家情報（決算説明会資料）</a>
         </div>
-        <div class="card guide-card">
-          <h4>2. TSMC 決算の「AI売上比率」</h4>
-          <p style="font-size:13px;"><b>BADの基準：</b> HPC(高性能計算)部門の成長率が前四半期より大きく低下した場合。<br>
-          <a href="https://investor.tsmc.com/japanese" target="_blank" style="color:var(--blue)">TSMC投資家情報</a></p>
-        </div>
+
         <div class="card guide-card">
           <h4>3. Micron HBMガイダンス</h4>
-          <p style="font-size:13px;"><b>BADの基準：</b> 「HBM(AIメモリ)の在庫が増えている」「来期の受注が鈍化」という発言。<br>
-          <span class="search-word">マイクロン 決算 HBM ガイダンス</span></p>
+          <p><b>BADの数値：</b> CEO等の発言から「来年分までの予約完売」という表現が消え、<b>「在庫の調整が必要」</b>という言葉が出た場合。</p>
+          <span class="search-word">マイクロン 決算 HBM ガイダンス</span>
         </div>
+
         <div class="card guide-card">
-          <h4>4. BigTech AI収益化の進捗</h4>
-          <p style="font-size:13px;"><b>BADの基準：</b> 「AIへの投資を継続するが、利益貢献には時間がかかる」と弱気になった時。<br>
-          <span class="search-word">MSFT 決算 Azure AI 寄与</span></p>
+          <h4>4. BigTech CAPEX（設備投資）</h4>
+          <p><b>BADの数値：</b> Microsoft、Amazon等の投資額が<b>前年同期比で0%以下（マイナス成長、または横ばい）</b>になった場合。</p>
+          <span class="search-word">GAFAM 決算 CAPEX 成長率</span>
         </div>
       </div>
+
+      <p style="margin-top: 40px; text-align: center; font-size: 11px; color: var(--muted);">最終解析：{{LAST_UPDATE}}</p>
     </main>
   </div>
 
@@ -196,11 +197,11 @@
       let desc = ""; let action = ""; let color = "";
       switch(phase) {
         case "GREEN": desc = "AI拡大期：正常"; action = "FANG+ 積立・保有継続"; color = "linear-gradient(135deg, #064e3b, #000)"; break;
-        case "YELLOW": desc = "変調：警戒開始"; action = "継続保有（新規買付注意）"; color = "linear-gradient(135deg, #78350f, #000)"; break;
-        case "ORANGE": desc = "警戒：複数指標の鈍化"; action = "新規積立を停止"; color = "linear-gradient(135deg, #7c2d12, #000)"; break;
+        case "YELLOW": desc = "変調：警戒開始"; action = "継続保有（静観）"; color = "linear-gradient(135deg, #78350f, #000)"; break;
+        case "ORANGE": desc = "警戒：リスク増大"; action = "新規積立を停止せよ"; color = "linear-gradient(135deg, #7c2d12, #000)"; break;
         case "RED": desc = "危険：需要の消失"; action = "資産の30〜50%を利確"; color = "linear-gradient(135deg, #7f1d1d, #000)"; break;
-        case "PURPLE": desc = "崩壊：サイクル終了確定"; action = "資産の70〜100%を退避"; color = "linear-gradient(135deg, #4c1d95, #000)"; break;
-        case "CHECK": desc = "要確認：データ欠落"; action = "決算短信を確認してください"; color = "linear-gradient(135deg, #444, #000)"; break;
+        case "PURPLE": desc = "崩壊：サイクル終了"; action = "全資産を退避・死守"; color = "linear-gradient(135deg, #4c1d95, #000)"; break;
+        case "CHECK": desc = "要確認：データ欠落"; action = "手動で決算を確認してください"; color = "linear-gradient(135deg, #444, #000)"; break;
       }
       document.getElementById('stateDesc').innerText = desc;
       document.getElementById('actionText').innerText = action;
