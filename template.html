@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>FANG+ Sentinel Ver 17.0 - Strategy Edition</title>
+  <title>FANG+ Sentinel Ver 17.0 - Final Edition</title>
   <style>
     :root {
       --bg: #030406; --panel: #0d111a; --ink: #f1f5f9; --muted: #64748b;
@@ -14,27 +14,14 @@
     body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, sans-serif; min-height: 100vh; }
     .app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
     
-    /* サイドバー */
     aside { 
-      padding: 30px 20px; 
-      border-right: 1px solid var(--line); 
-      background: #000; 
-      position: sticky; 
-      top: 0; 
-      height: 100vh; 
-      display: flex;
-      flex-direction: column;
+      padding: 30px 20px; border-right: 1px solid var(--line); background: #000; 
+      position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column;
     }
 
-    /* 手動確認リスト（復活させました） */
     .manual-list { 
-      margin: 15px 0; 
-      font-size: 11px; 
-      background: rgba(245, 158, 11, 0.1); 
-      padding: 15px; 
-      border-radius: 10px; 
-      border: 1px solid rgba(245, 158, 11, 0.3); 
-      line-height: 1.6;
+      margin: 15px 0; font-size: 11px; background: rgba(245, 158, 11, 0.1); 
+      padding: 15px; border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.3); line-height: 1.6;
     }
     .manual-list b { color: var(--yellow); display: block; margin-bottom: 5px; }
 
@@ -51,12 +38,19 @@
     .hero { padding: 50px; border-radius: 30px; text-align: center; margin-bottom: 30px; border: 1px solid var(--line); transition: 0.8s ease; }
     .phase-title { font-size: 80px; font-weight: 900; line-height: 1; margin: 15px 0; letter-spacing: -2px; }
     .grid { display: grid; gap: 20px; grid-template-columns: 1fr 1fr; }
-    .card { background: var(--panel); padding: 24px; border-radius: 20px; border: 1px solid var(--line); }
-    #manual-screen { display: none; }
+    .card { background: var(--panel); padding: 24px; border-radius: 20px; border: 1px solid var(--line); margin-bottom: 20px; }
+    
+    #manual-screen, #guide-screen { display: none; }
     .step-box { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; }
     .step-num { width: 35px; height: 35px; border-radius: 50%; background: var(--blue); display: grid; place-items: center; font-weight: bold; flex-shrink: 0; }
     .phase-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     .phase-table td, .phase-table th { padding: 15px; border: 1px solid var(--line); text-align: left; }
+
+    /* 調査ガイド用スタイル */
+    .guide-card { border-left: 4px solid var(--yellow); padding-left: 20px; margin-bottom: 30px; }
+    .guide-card h4 { color: var(--yellow); margin: 0 0 10px; }
+    .search-word { background: #000; color: var(--green); padding: 4px 8px; border-radius: 4px; font-family: monospace; }
+
     .BAD { color: var(--red); font-weight: bold; }
     .OK { color: var(--green); font-weight: bold; }
     .metric { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
@@ -70,18 +64,18 @@
       <h2 style="color:var(--blue); margin-bottom: 5px; font-size: 22px;">Sentinel 17.0</h2>
       <p style="font-size: 11px; color: var(--muted);">1800万円防衛・最終モデル</p>
       
-      <!-- 手動確認リスト -->
-      <div class="manual-list">
-        <b>手動確認推奨（yfinance限界）</b>
-        ・GAFAM独占禁止法の判決ニュース<br>
-        ・TSMC 決算発表時の「AI売上」<br>
-        ・Micron HBMガイダンス<br>
-        ・BigTech AI収益化の進捗
-      </div>
-
       <div class="nav-group">
         <button class="nav-btn active" id="btn-monitor" onclick="showScreen('monitor')"><span>●</span> 監視モニター</button>
         <button class="nav-btn" id="btn-manual" onclick="showScreen('manual')"><span>📖</span> 運用説明書</button>
+        <button class="nav-btn" id="btn-guide" onclick="showScreen('guide')"><span>🔍</span> 調査ガイド</button>
+      </div>
+
+      <div class="manual-list">
+        <b>要チェック項目</b>
+        ・独占禁止法の判決<br>
+        ・TSMCのAI売上比率<br>
+        ・Micron HBMガイダンス<br>
+        ・BigTech AI収益化
       </div>
 
       <div style="padding: 15px; border-radius: 12px; background: rgba(255,255,255,0.05); margin-top: auto;">
@@ -91,6 +85,7 @@
     </aside>
 
     <main>
+      <!-- 画面1: 監視モニター -->
       <div id="monitor-screen">
         <div class="hero" id="hero">
           <div style="opacity: 0.7; font-size: 14px; font-weight: bold; letter-spacing: 5px;">CURRENT STATUS PHASE</div>
@@ -113,14 +108,15 @@
         </div>
       </div>
 
+      <!-- 画面2: 運用説明書 -->
       <div id="manual-screen">
-        <h1 style="margin-top:0">📖 運用説明書</h1>
-        <div class="card" style="margin-bottom: 25px;">
+        <h1>📖 運用説明書</h1>
+        <div class="card">
           <h3>1. 下落より早く動くロジック</h3>
-          <p style="font-size: 14px; line-height: 1.8; color: var(--muted);">Sentinelは株価が崩れる前に、企業の決算書に現れる<b>「投資の意志（原因）」</b>を最優先して判定します。</p>
+          <p style="font-size: 14px; line-height: 1.8; color: var(--muted);">Sentinelは株価そのものが崩れる前に、企業の決算書に現れる<b>「投資の意志（原因）」</b>を最優先して判定します。</p>
           <div style="margin-top: 20px;">
-            <div class="step-box"><div class="step-num">1</div><div><b>原因系：GAFAMの決算</b><br><small>株価が下がる数ヶ月前、企業が投資を減らした瞬間にフェーズが上がります。</small></div></div>
-            <div class="step-box"><div class="step-num">2</div><div><b>結果系：株価の暴落</b><br><small>一般投資家が騒ぎ出した時には既に手遅れ。Sentinelは手順1の「数字」で逃げます。</small></div></div>
+            <div class="step-box"><div class="step-num">1</div><div><b>原因系：BigTechの決算</b><br><small>株価が下がる数ヶ月前、企業が投資を減らした瞬間にフェーズが上がります。</small></div></div>
+            <div class="step-box"><div class="step-num">2</div><div><b>結果系：株価の暴落</b><br><small>パニックが起きた時には既に手遅れ。Sentinelは手順1の「数字」で逃げます。</small></div></div>
           </div>
         </div>
         <div class="card">
@@ -134,7 +130,48 @@
           </table>
         </div>
       </div>
-      <p style="margin-top: 40px; text-align: center; font-size: 11px; color: var(--muted);">最終解析：{{LAST_UPDATE}} | FANG+ 1800万円防衛システム</p>
+
+      <!-- 画面3: 調査ガイド（新規追加） -->
+      <div id="guide-screen">
+        <h1>🔍 手動項目の調査ガイド</h1>
+        <p style="color:var(--muted); margin-bottom:30px;">yfinance（プログラム）では取得できない「AIサイクルの核心」を、以下の方法で年4回（決算期）チェックしてください。</p>
+        
+        <div class="card guide-card">
+          <h4>1. GAFAM独占禁止法の判決</h4>
+          <p style="font-size:14px; line-height:1.6;">
+            <b>何を確認するか：</b> 司法省(DOJ)や欧州委員会による「解体命令」や「事業モデルを根底から覆す判決」の有無。<br>
+            <b>チェック先：</b> Googleニュースで <span class="search-word">Google 独占禁止法 判決</span> または <span class="search-word">Big Tech Antitrust ruling</span> と検索。
+          </p>
+        </div>
+
+        <div class="card guide-card">
+          <h4>2. TSMC 決算の「AI売上比率」</h4>
+          <p style="font-size:14px; line-height:1.6;">
+            <b>何を確認するか：</b> 全社売上のうち「HPC（AI向けチップ含む）」の成長率が鈍化していないか。<br>
+            <b>チェック先：</b> <a href="https://investor.tsmc.com/japanese" target="_blank" style="color:var(--blue)">TSMC投資家情報</a> の「決算説明会資料」内にある「Revenue by Platform」のグラフ。
+          </p>
+        </div>
+
+        <div class="card guide-card">
+          <h4>3. Micron HBMガイダンス</h4>
+          <p style="font-size:14px; line-height:1.6;">
+            <b>何を確認するか：</b> AI専用メモリ(HBM)の「来期予想」と「在庫状況」。<br>
+            <b>チェック先：</b> ニュースサイトで <span class="search-word">マイクロン 決算 HBM ガイダンス</span> と検索。「2025年分まで完売」といった強気発言が消えたら警告。
+          </p>
+        </div>
+
+        <div class="card guide-card">
+          <h4>4. BigTech AI収益化の進捗</h4>
+          <p style="font-size:14px; line-height:1.6;">
+            <b>何を確認するか：</b> Microsoft AzureやGoogle Cloudの成長のうち「AIがどれだけ寄与したか」。<br>
+            <b>チェック先：</b> 決算ニュースで <span class="search-word">MSFT 決算 Azure AI 寄与</span> と検索。投資額に見合う利益が出ていないと市場が判断し始めたら危険。
+          </p>
+        </div>
+      </div>
+
+      <p style="margin-top: 40px; text-align: center; font-size: 11px; color: var(--muted);">
+        最終解析：{{LAST_UPDATE}} | FANG+ 1800万円防衛システム
+      </p>
     </main>
   </div>
 
@@ -142,10 +179,14 @@
     function showScreen(screenId) {
       document.getElementById('monitor-screen').style.display = (screenId === 'monitor') ? 'block' : 'none';
       document.getElementById('manual-screen').style.display = (screenId === 'manual') ? 'block' : 'none';
+      document.getElementById('guide-screen').style.display = (screenId === 'guide') ? 'block' : 'none';
+      
       document.getElementById('btn-monitor').classList.toggle('active', screenId === 'monitor');
       document.getElementById('btn-manual').classList.toggle('active', screenId === 'manual');
+      document.getElementById('btn-guide').classList.toggle('active', screenId === 'guide');
       window.scrollTo(0, 0);
     }
+
     function updateUI() {
       const phase = document.getElementById('phaseDisplay').innerText;
       let desc = ""; let action = ""; let color = "";
